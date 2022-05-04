@@ -59,12 +59,13 @@
     }
   },
   "script_path": "qfmatch",
-  "return": [
-    {
-      "png_data": [],
+  "return": {
+    "png_data": {
+      "name": "png_data",
+      "type": "array",
       "description": "training transformed"
     }
-  ],
+  },
   "depends_and_script": ["dml"],
   "libs": [
     "matplotlib==3.4.3",

@@ -26,12 +26,13 @@
     }
   },
   "script_path": "cluster",
-  "return": [
-    {
-      "training_df": [],
+  "return": {
+    "training_df": {
+      "name": "training_df",
+      "type": "array",
       "description": "training transformed"
     }
-  ],
+  },
   "depends_and_script": [
     "zscore"
   ],
