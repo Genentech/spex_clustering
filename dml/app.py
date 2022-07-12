@@ -10,7 +10,7 @@ from decimal import Decimal
 
 def run(**kwargs):
 
-    fn_in_train = kwargs.get("../cluster")
+    fn_in_train = kwargs.get("cluster")
     fn_in_train_zscore = kwargs.get("z_score")
     folder_in_test_orig = "testing"
     folder_in_test_zscore = "testing"

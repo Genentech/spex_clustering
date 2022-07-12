@@ -5,7 +5,7 @@ import phenograph
 
 def run(**kwargs):
 
-    fn_in_orig = kwargs.get('df').to_numpy()
+    fn_in_orig = kwargs.get('dataframe').to_numpy()
 
     if kwargs.get('transformed') is None:
         fn_in = kwargs.get('z_score')

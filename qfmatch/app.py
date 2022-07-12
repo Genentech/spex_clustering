@@ -2320,7 +2320,7 @@ def run(**kwargs):
 
     np.savetxt(
         _LEFT_FILENAME,
-        kwargs.get("../dml"),
+        kwargs.get("dml"),
         fmt="%.5f",
         delimiter=",",
         comments="",
@@ -2387,7 +2387,7 @@ def run(**kwargs):
     # with open(_LEFT_FILENAME, 'r') as f:
     #     reader = csv.reader(f, delimiter=',')
     #     headers = next(reader)
-    reader = kwargs.get("../dml")
+    reader = kwargs.get("dml")
     train_data = np.array(list(reader))[:, 1:].astype(float)
     train_labels = train_data[:, -1].astype(int).astype(str)
     train_data = train_data[:, -3:-1]

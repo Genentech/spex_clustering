@@ -3,20 +3,6 @@
   "description": "cluster for transformed or zscore data ",
   "stage": "3",
   "params": {
-    "transformed": {
-      "name": "transformed",
-      "description": "Multichannel numpy array (C,X,Y)",
-      "type": "array",
-      "hidden": true,
-      "default": []
-    },
-    "markers": {
-      "name": "markers",
-      "description": "array of markers",
-      "type": "array",
-      "hidden": true,
-      "default": []
-    },
     "knn": {
       "name": "knn",
       "description": "",
