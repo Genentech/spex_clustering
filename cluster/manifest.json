@@ -13,8 +13,8 @@
   },
   "script_path": "cluster",
   "return": {
-    "training_df": {
-      "name": "training_df",
+    "cluster": {
+      "name": "cluster",
       "type": "array",
       "description": "training transformed"
     }
