@@ -26,7 +26,7 @@ def run(**kwargs):
     data_for_calc = data[:, markers]
 
     t0 = time.time()
-    communities, graph, q = phenograph.cluster(data_for_calc, n_jobs=1, k=knn)
+    communities, graph, q = phenograph.cluster(data_for_calc, n_jobs=1, k=knn, clustering_algo='leiden')
     labels = communities.astype(int).astype(str)
     t1 = time.time()
 
