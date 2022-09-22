@@ -9,6 +9,13 @@
       "type": "float",
       "required": true,
       "default": 0.2
+    },
+    "related_task": {
+      "name": "related_task",
+      "description": "task for hdbscan.HDBSCAN and mapper.transform",
+      "type": "string",
+      "required": true,
+      "default": ""
     }
   },
   "script_path": "dml",
