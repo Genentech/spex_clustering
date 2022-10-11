@@ -13,7 +13,7 @@
     "related_task": {
       "name": "related_task",
       "description": "task for hdbscan.HDBSCAN and mapper.transform",
-      "type": "string",
+      "type": "pipeline_job_id",
       "required": true,
       "default": ""
     }
