@@ -21,19 +21,20 @@ def run(**kwargs):
     fn_out_train_csv = "training_dml.csv"
     folder_out_test = "testing_dml"
     data_storage = kwargs.get('data_storage')  # , 'C:\\temp\\DATA_STORAGE'
-    related_task = kwargs.get('related_task') # "348554471")
+    related_task = kwargs.get('related_task')  # "348554471")
     related_parent = kwargs.get('related_parent')
 
     def load_related_data():
         path = os.path.join(data_storage, "jobs", related_task, related_parent, "result.pickle")
+        file_path = os.path.join(os.path.dirname(__file__), "related_data.pickle")
         if not os.path.isfile(path):
             return {}
         else:
             shutil.copyfile(
                 path,
-                os.path.join(os.path.dirname(__file__), "related_data.pickle"),
+                file_path,
             )
-            with open("related_data.pickle", "rb") as infile:
+            with open(file_path, "rb") as infile:
                 data = pickle.load(infile)
                 return data
     # 30
