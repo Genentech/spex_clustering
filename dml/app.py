@@ -7,7 +7,6 @@ import csv
 import numpy as np
 import umap
 import hdbscan
-import matplotlib.pyplot as plt
 
 from decimal import Decimal
 
