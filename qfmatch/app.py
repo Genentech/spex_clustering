@@ -30,6 +30,9 @@ from networkx.drawing import nx_agraph
 from scipy.stats import mstats
 import csv
 import matplotlib.pyplot as plt
+import io
+import base64
+import os
 
 
 # SETTINGS.
@@ -180,7 +183,7 @@ class SplittingInHalfBinner(_BaseBinner):
                             coordinate.append(
                                 upper_borders[i]
                                 if len(min_max_bin) > i - 1
-                                and min_max_bin[i - 1] == "1"
+                                   and min_max_bin[i - 1] == "1"
                                 else lower_borders[i]
                             )
 
@@ -309,14 +312,14 @@ class DataLoader(object):
     """Loads data from file to list of ND point.Point objects."""
 
     def __init__(
-        self,
-        filename,
-        num_first_rows_to_skip=2,
-        line_separator="\r",
-        x_columns=tuple(),
-        cluster_id_column=2,
-        cluster_ids_to_exclude=None,
-        columns_separator_regex=r"\s",
+            self,
+            filename,
+            num_first_rows_to_skip=2,
+            line_separator="\r",
+            x_columns=tuple(),
+            cluster_id_column=2,
+            cluster_ids_to_exclude=None,
+            columns_separator_regex=r"\s",
     ):
 
         assert cluster_id_column not in x_columns
@@ -343,7 +346,7 @@ class DataLoader(object):
     def LoadAndReturnPointsDividedByClusterId(self, point_custom_attributes=None):
         points_by_cluster_id = collections.defaultdict(list)
         for point in self._OpenFileAndYieldPoints(
-            point_custom_attributes=point_custom_attributes
+                point_custom_attributes=point_custom_attributes
         ):
             points_by_cluster_id[point.GetClusterId()].append(point)
         return points_by_cluster_id
@@ -359,8 +362,8 @@ class DataLoader(object):
                         ]
                         xs = [float(data_list[i]) for i in self._x_columns]
                         if (
-                            data_list[self._cluster_id_column]
-                            in self._cluster_ids_to_exclude
+                                data_list[self._cluster_id_column]
+                                in self._cluster_ids_to_exclude
                         ):
                             continue
                         cluster_id = ClusterId(data_list[self._cluster_id_column])
@@ -438,7 +441,7 @@ class ColorGenerator(object):
     """
 
     def __init__(
-        self, chunk_ids, predefined_colors_by_chunk_id=None, exclude_colors=None
+            self, chunk_ids, predefined_colors_by_chunk_id=None, exclude_colors=None
     ):
         self._available_colors = list(KELLY_COLORS)
         if predefined_colors_by_chunk_id:
@@ -526,9 +529,9 @@ class ClusterId(object):
 
     def IsNegative(self):
         return (
-            len(self._parts) == 1
-            and self._parts[0].isdigit()
-            and int(self._parts[0]) < 0
+                len(self._parts) == 1
+                and self._parts[0].isdigit()
+                and int(self._parts[0]) < 0
         )
 
     def IsZero(self):
@@ -565,9 +568,15 @@ def _LoadPointsByClusterId(filename, cust_attrs_to_set=None, **kwargs):
         )
 
     _DATA_FILES_LINE_SEPARATOR = "\n"
-    _DATA_FILES_X_COLUMNS = tuple(kwargs.get("x_columns"))
+    # _DATA_FILES_X_COLUMNS = tuple(kwargs.get("x_columns"))
 
-    _DATA_FILES_CLUSTER_ID_COLUMN = kwargs.get("cluster_id_column")
+    _DATA_FILES_X_COLUMNS = tuple([1, 2])
+
+    # _DATA_FILES_CLUSTER_ID_COLUMN = kwargs.get("cluster_id_column")
+
+    _, _DATA_FILES_CLUSTER_ID_COLUMN = kwargs.get('dml').shape
+    _DATA_FILES_CLUSTER_ID_COLUMN -= 1
+
     _COLUMNS_SEPARATOR_REGEX = r","
     return DataLoader(
         filename,
@@ -723,9 +732,9 @@ class _Dissimilarity(object):
             return True
         else:
             return (
-                other.left_cluster_id == self.left_cluster_id
-                and other.right_cluster_id == self.right_cluster_id
-                and other.dissimilarity_score == self.dissimilarity_score
+                    other.left_cluster_id == self.left_cluster_id
+                    and other.right_cluster_id == self.right_cluster_id
+                    and other.dissimilarity_score == self.dissimilarity_score
             )
 
     def __hash__(self):
@@ -838,6 +847,7 @@ class _Matcher(object):
         _RIGHT_DATASET = "right_dataset"
         _LEFT_DATASET = "left_dataset"
         _LEFT_FILENAME = "LEFT"
+        _LEFT_FILENAME = os.path.join(os.path.dirname(__file__), _LEFT_FILENAME)
         _CALCULATE_MDS_MODE_POINT = "POINT"
         _CALCULATE_MDS_MODE_CLUSTER_MEDIAN = "CLUSTER_MEDIAN"
         _CALCULATE_MDS_MODE_BIN_MEDIAN = "BIN_MEDIAN"
@@ -857,7 +867,8 @@ class _Matcher(object):
         _DATASET_TYPE_CUSTOM_ATTRIBUTE_NAME = "dataset_type"
         _RIGHT_DATASET = "right_dataset"
         _LEFT_DATASET = "left_dataset"
-        _RIGHT_FILENAME = kwargs.get("_RIGHT_FILENAME")
+        _RIGHT_FILENAME = "RIGHT"
+        _RIGHT_FILENAME = os.path.join(os.path.dirname(__file__), _RIGHT_FILENAME)
         _CALCULATE_MDS_MODE_POINT = "POINT"
         _CALCULATE_MDS_MODE_CLUSTER_MEDIAN = "CLUSTER_MEDIAN"
         _CALCULATE_MDS_MODE_BIN_MEDIAN = "BIN_MEDIAN"
@@ -939,13 +950,13 @@ class _Matcher(object):
 
             _CALCULATE_MDS_MODE = _CALCULATE_MDS_MODE_CLUSTER_MEDIAN
             if (
-                cur_point.GetCustomAttribute(_DATASET_TYPE_CUSTOM_ATTRIBUTE_NAME)
-                == _LEFT_DATASET
+                    cur_point.GetCustomAttribute(_DATASET_TYPE_CUSTOM_ATTRIBUTE_NAME)
+                    == _LEFT_DATASET
             ):
                 left_bin_by_cluster_id[cur_point.GetClusterId()].AddPoint(cur_point)
             elif (
-                cur_point.GetCustomAttribute(_DATASET_TYPE_CUSTOM_ATTRIBUTE_NAME)
-                == _RIGHT_DATASET
+                    cur_point.GetCustomAttribute(_DATASET_TYPE_CUSTOM_ATTRIBUTE_NAME)
+                    == _RIGHT_DATASET
             ):
                 right_bin_by_cluster_id[cur_point.GetClusterId()].AddPoint(cur_point)
             else:
@@ -998,16 +1009,16 @@ class _Matcher(object):
         )
 
         for left_cluster_id, left_bin_collection in iter(
-            self._left_bin_collection_by_cluster_id.items()
+                self._left_bin_collection_by_cluster_id.items()
         ):
             for right_cluster_id, right_bin_collection in iter(
-                self._right_bin_collection_by_cluster_id.items()
+                    self._right_bin_collection_by_cluster_id.items()
             ):
                 if _IsWithin(
-                    left_bin_collection.GetMedian(),
-                    right_bin_collection.GetMedian(),
-                    left_bin_collection.GetSigma()
-                    * _SIGMA_MULTIPLIER_TO_CONSIDER_CLUSTERS_WITH_MEDIAN_WITHIN,
+                        left_bin_collection.GetMedian(),
+                        right_bin_collection.GetMedian(),
+                        left_bin_collection.GetSigma()
+                        * _SIGMA_MULTIPLIER_TO_CONSIDER_CLUSTERS_WITH_MEDIAN_WITHIN,
                 ) or _IsWithin(
                     right_bin_collection.GetMedian(),
                     left_bin_collection.GetMedian(),
@@ -1072,8 +1083,8 @@ class _Matcher(object):
             # right.closest = left.
             if diss.right_cluster_id in closest_for_right:
                 if (
-                    closest_for_right[diss.right_cluster_id].left_cluster_id
-                    == left_cluster_id
+                        closest_for_right[diss.right_cluster_id].left_cluster_id
+                        == left_cluster_id
                 ):
                     print(
                         (
@@ -1184,8 +1195,8 @@ class _Matcher(object):
             )
 
             if (
-                best_diss.left_cluster_id != matched_left_cluster_id
-                or best_diss.right_cluster_id != matched_right_cluster_id
+                    best_diss.left_cluster_id != matched_left_cluster_id
+                    or best_diss.right_cluster_id != matched_right_cluster_id
             ):
                 del self._matched_pairs[matched_pair_index]
                 self._matched_pairs.append(
@@ -1227,8 +1238,8 @@ class _Matcher(object):
             )
 
             if (
-                best_diss.left_cluster_id != matched_left_cluster_id
-                or best_diss.right_cluster_id != matched_right_cluster_id
+                    best_diss.left_cluster_id != matched_left_cluster_id
+                    or best_diss.right_cluster_id != matched_right_cluster_id
             ):
                 del self._matched_pairs[matched_pair_index]
                 self._matched_pairs.append(
@@ -1236,11 +1247,11 @@ class _Matcher(object):
                 )
 
     def _ExhaustiveMergeOnSinglePair(
-        self,
-        matched_left_cluster_id,
-        matched_right_cluster_id,
-        left_unmatched_cluster_ids,
-        right_unmatched_cluster_ids,
+            self,
+            matched_left_cluster_id,
+            matched_right_cluster_id,
+            left_unmatched_cluster_ids,
+            right_unmatched_cluster_ids,
     ):
         # List of left cluster ids which were not matched to any right cluster
         # initially and which closest cluster on the right is the
@@ -1288,10 +1299,10 @@ class _Matcher(object):
             iteration += 1
 
             for cur_left_merging_candidates in _YieldAllSubsets(
-                left_merging_candidates
+                    left_merging_candidates
             ):
                 for cur_right_merging_candidates in _YieldAllSubsets(
-                    right_merging_candidates
+                        right_merging_candidates
                 ):
                     merged_left_cluster_id = cluster.ClusterId.MergeFromMany(
                         list(cur_left_merging_candidates)
@@ -1303,8 +1314,8 @@ class _Matcher(object):
                     )
 
                     if (merged_left_cluster_id, merged_right_cluster_id) == (
-                        original_best_diss.left_cluster_id,
-                        original_best_diss.right_cluster_id,
+                            original_best_diss.left_cluster_id,
+                            original_best_diss.right_cluster_id,
                     ):
                         continue
 
@@ -1357,11 +1368,11 @@ class _Matcher(object):
                 right_merging_candidates = []
 
                 for (
-                    left_part_cluster_id
+                        left_part_cluster_id
                 ) in cur_best_diss.left_cluster_id.SplitForEachPart():
                     if (
-                        left_part_cluster_id
-                        in self._unmatched_right_by_closest_left_cluster_id
+                            left_part_cluster_id
+                            in self._unmatched_right_by_closest_left_cluster_id
                     ):
                         right_merging_candidates.extend(
                             c
@@ -1372,11 +1383,11 @@ class _Matcher(object):
                         )
 
                 for (
-                    right_part_cluster_id
+                        right_part_cluster_id
                 ) in cur_best_diss.right_cluster_id.SplitForEachPart():
                     if (
-                        right_part_cluster_id
-                        in self._unmatched_left_by_closest_right_cluster_id
+                            right_part_cluster_id
+                            in self._unmatched_left_by_closest_right_cluster_id
                     ):
                         left_merging_candidates.extend(
                             c
@@ -1482,7 +1493,7 @@ class _Matcher(object):
             for cur_point in points:
                 for i_coordinate in range(0, cur_point.GetNumCoordinates()):
                     for j_coordinate in range(
-                        i_coordinate + 1, cur_point.GetNumCoordinates()
+                            i_coordinate + 1, cur_point.GetNumCoordinates()
                     ):
                         two_d_plots[(i_coordinate, j_coordinate)] = _2DPlotData(
                             i_coordinate, j_coordinate
@@ -1500,8 +1511,8 @@ class _Matcher(object):
         for cluster_id, points in self._all_left_points_by_cluster_id.items():
             for cur_point in points:
                 if (
-                    _DO_NOT_SHOW_NEGATIVE_CLUSERS_ON_PLOT
-                    and cur_point.GetClusterId().IsNegative()
+                        _DO_NOT_SHOW_NEGATIVE_CLUSERS_ON_PLOT
+                        and cur_point.GetClusterId().IsNegative()
                 ):
                     continue
                 elif cur_point.GetClusterId().IsZero():
@@ -1527,8 +1538,8 @@ class _Matcher(object):
         for cluster_id, points in self._all_right_points_by_cluster_id.items():
             for cur_point in points:
                 if (
-                    _DO_NOT_SHOW_NEGATIVE_CLUSERS_ON_PLOT
-                    and cur_point.GetClusterId().IsNegative()
+                        _DO_NOT_SHOW_NEGATIVE_CLUSERS_ON_PLOT
+                        and cur_point.GetClusterId().IsNegative()
                 ):
                     continue
                 elif cur_point.GetClusterId().IsZero():
@@ -1617,11 +1628,11 @@ class _Matcher(object):
 
         # Mix both sides and run mds.
         for bin_collection_by_cluster_id, num_total_points, side in (
-            (self._left_bin_collection_by_cluster_id, num_left_points, "Left"),
-            (self._right_bin_collection_by_cluster_id, num_right_points, "Right"),
+                (self._left_bin_collection_by_cluster_id, num_left_points, "Left"),
+                (self._right_bin_collection_by_cluster_id, num_right_points, "Right"),
         ):
             for cluster_id, bin_collection in iter(
-                bin_collection_by_cluster_id.items()
+                    bin_collection_by_cluster_id.items()
             ):
                 for cur_bin in bin_collection.GetBins():
                     if cur_bin.GetPoints():
@@ -1675,7 +1686,7 @@ class _Matcher(object):
             len(coordinates) - num_left_coordinates,
             right_mds_coordinates_per_cluster_id,
             colors_by_right_cluster_id,
-        )
+            )
 
         # Calculate axis limits for both subplots.
         x_lim, y_lim = self._DefinePlotLimits(left_xs + right_xs, left_ys + right_ys)
@@ -1719,8 +1730,8 @@ class _Matcher(object):
 
         # Mix both sides and run mds.
         for points_by_cluster_id, num_total_points, side in (
-            (self._all_left_points_by_cluster_id, num_left_points, "Left"),
-            (self._all_right_points_by_cluster_id, num_right_points, "Right"),
+                (self._all_left_points_by_cluster_id, num_left_points, "Left"),
+                (self._all_right_points_by_cluster_id, num_right_points, "Right"),
         ):
             for cluster_id, cur_points in points_by_cluster_id.items():
                 cur_coordinates = [p.GetCoordinates() for p in cur_points]
@@ -1758,7 +1769,7 @@ class _Matcher(object):
                             mpatches.Patch(
                                 color=colors_by_left_cluster_id[cluster_ids[i]],
                                 label="%s: %s%%"
-                                % (cluster_ids[i], round(ratio_in_total[i] * 100, 2)),
+                                      % (cluster_ids[i], round(ratio_in_total[i] * 100, 2)),
                             ),
                         )
                     )
@@ -1775,7 +1786,7 @@ class _Matcher(object):
                                     color_generator.STRONG_BLUE
                                 ),
                                 label="%s: %s%%"
-                                % (cluster_ids[i], round(ratio_in_total[i] * 100, 2)),
+                                      % (cluster_ids[i], round(ratio_in_total[i] * 100, 2)),
                             ),
                         )
                     )
@@ -1792,7 +1803,7 @@ class _Matcher(object):
                             mpatches.Patch(
                                 color=colors_by_right_cluster_id[cluster_ids[i]],
                                 label="%s: %s%%"
-                                % (cluster_ids[i], round(ratio_in_total[i] * 100, 2)),
+                                      % (cluster_ids[i], round(ratio_in_total[i] * 100, 2)),
                             ),
                         )
                     )
@@ -1809,7 +1820,7 @@ class _Matcher(object):
                                     color_generator.STRONG_BLUE
                                 ),
                                 label="%s: %s%%"
-                                % (cluster_ids[i], round(ratio_in_total[i] * 100, 2)),
+                                      % (cluster_ids[i], round(ratio_in_total[i] * 100, 2)),
                             ),
                         )
                     )
@@ -1895,8 +1906,8 @@ class _Matcher(object):
 
         # Mix both sides and run mds.
         for points_by_cluster_id in (
-            self._all_left_points_by_cluster_id,
-            self._all_right_points_by_cluster_id,
+                self._all_left_points_by_cluster_id,
+                self._all_right_points_by_cluster_id,
         ):
             for cluster_id, cur_points in points_by_cluster_id.items():
                 for cur_point in cur_points:
@@ -1973,7 +1984,7 @@ class _Matcher(object):
 
     @staticmethod
     def _GetMdsSubplotDataForOneSide(
-        num_points, mds_coordinates_by_cluster_id, colors_by_cluster_id
+            num_points, mds_coordinates_by_cluster_id, colors_by_cluster_id
     ):
         xs, ys, colors, sizes, patches_and_ratios = [], [], [], [], []
         for cluster_id, coordinates in mds_coordinates_by_cluster_id.items():
@@ -1991,7 +2002,7 @@ class _Matcher(object):
                         mpatches.Patch(
                             color=colors_by_cluster_id[cluster_id],
                             label="%s: %s%%"
-                            % (int(cluster_id), round(ratio_in_total * 100, 2)),
+                                  % (int(cluster_id), round(ratio_in_total * 100, 2)),
                         ),
                     )
                 )
@@ -2008,7 +2019,7 @@ class _Matcher(object):
                                 color_generator.STRONG_BLUE
                             ),
                             label="%s: %s%%"
-                            % (int(cluster_id), round(ratio_in_total * 100, 2)),
+                                  % (int(cluster_id), round(ratio_in_total * 100, 2)),
                         ),
                     )
                 )
@@ -2056,7 +2067,7 @@ def _MixCollections(bc1, bc2):
 
 
 def _CalculateDissimilarityBetweenClusters(
-    first_cluster_id, first_bin_collection, second_cluster_id, second_bin_collection
+        first_cluster_id, first_bin_collection, second_cluster_id, second_bin_collection
 ):
     # Sanity check.
     assert len(first_bin_collection.GetBins()) == len(second_bin_collection.GetBins())
@@ -2104,7 +2115,7 @@ def _CalculateDissimilarityBetweenClusters(
             importance_coef = _Dist(j_mean, i_mean) / max_dist
 
             dissimilarity_score += (
-                math.pow((1 - importance_coef), 2) * (h_i - f_i) * (h_j - f_j)
+                    math.pow((1 - importance_coef), 2) * (h_i - f_i) * (h_j - f_j)
             )
 
     if remove_prev_line_from_stdout:
@@ -2210,8 +2221,8 @@ class _TreePlotter(object):
                 if max_distance is None or distance_between_medians > max_distance:
                     max_distance = distance_between_medians
                 if (
-                    min_dissimilarity is None
-                    or min_dissimilarity < diss.dissimilarity_score
+                        min_dissimilarity is None
+                        or min_dissimilarity < diss.dissimilarity_score
                 ):
                     min_dissimilarity = diss.dissimilarity_score
                 distances_and_dissimilarities.append((distance_between_medians, diss))
@@ -2227,8 +2238,8 @@ class _TreePlotter(object):
             closeness_scores_and_dissimilarities.append(
                 (
                     (
-                        diss.dissimilarity_score
-                        + (1.0 / closeness_scaling) * distance_between_medians
+                            diss.dissimilarity_score
+                            + (1.0 / closeness_scaling) * distance_between_medians
                     ),
                     diss,
                 )
@@ -2238,8 +2249,8 @@ class _TreePlotter(object):
                 % (
                     diss.dissimilarity_score,
                     (
-                        diss.dissimilarity_score
-                        + (1.0 / closeness_scaling) * distance_between_medians
+                            diss.dissimilarity_score
+                            + (1.0 / closeness_scaling) * distance_between_medians
                     ),
                 )
             )
@@ -2252,8 +2263,8 @@ class _TreePlotter(object):
         )
         for _, diss in closeness_scores_and_dissimilarities:
             if (
-                diss.left_cluster_id in paired_cluster_ids
-                and diss.right_cluster_id in paired_cluster_ids
+                    diss.left_cluster_id in paired_cluster_ids
+                    and diss.right_cluster_id in paired_cluster_ids
             ):
                 continue
             elif diss.left_cluster_id in paired_cluster_ids:
@@ -2317,6 +2328,7 @@ class _TreePlotter(object):
 
 def run(**kwargs):
     _LEFT_FILENAME = "LEFT"
+    _LEFT_FILENAME = os.path.join(os.path.dirname(__file__), _LEFT_FILENAME)
 
     np.savetxt(
         _LEFT_FILENAME,
@@ -2325,10 +2337,20 @@ def run(**kwargs):
         delimiter=",",
         comments="",
     )
+    _RIGHT_FILENAME = "RIGHT"
+    _RIGHT_FILENAME = os.path.join(os.path.dirname(__file__), _RIGHT_FILENAME)
+    np.savetxt(
+        _RIGHT_FILENAME,
+        kwargs.get("dml_0"),
+        fmt="%.5f",
+        delimiter=",",
+        comments="",
+    )
 
-    _RIGHT_FILENAME = "././testing_dml//KBM0201f_Slide2_17505_IPF.csv"
     _PNG_FILENAME = "match_result.png"
+    _PNG_FILENAME = os.path.join(os.path.dirname(__file__), _PNG_FILENAME)
     _MATCH_RESULT_FILENAME = "match_result.csv"
+    _MATCH_RESULT_FILENAME = os.path.join(os.path.dirname(__file__), _MATCH_RESULT_FILENAME)
     # Minimal bin size for binning the mix.
 
     # How many first rows in data files contain bogus data (headers, description
@@ -2338,9 +2360,9 @@ def run(**kwargs):
     _DATA_FILES_LINE_SEPARATOR = "\n"
     _COLUMNS_SEPARATOR_REGEX = r","
     # In which columns we have features' values in data files.
-    _DATA_FILES_X_COLUMNS = kwargs.get("x_columns")
+    # _DATA_FILES_X_COLUMNS = kwargs.get("x_columns")
     # In which column we have cluster id in data files.
-    _DATA_FILES_CLUSTER_ID_COLUMN = kwargs.get("cluster_id_column")
+    # _DATA_FILES_CLUSTER_ID_COLUMN = kwargs.get("cluster_id_column")
 
     # Whether we want not to show clusters with ids < 0 on plot.
     _DO_NOT_SHOW_NEGATIVE_CLUSERS_ON_PLOT = False
@@ -2506,15 +2528,15 @@ def run(**kwargs):
     MEDIUM_SIZE = 7
     BIGGER_SIZE = 9
 
-    plt.rc("font", size=SMALL_SIZE)  # controls default text sizes
-    plt.rc("axes", titlesize=SMALL_SIZE)  # fontsize of the axes title
+    plt.rc("font", size=MEDIUM_SIZE)  # controls default text sizes
+    plt.rc("axes", titlesize=MEDIUM_SIZE)  # fontsize of the axes title
     plt.rc("axes", labelsize=MEDIUM_SIZE)  # fontsize of the x and y labels
-    plt.rc("xtick", labelsize=SMALL_SIZE)  # fontsize of the tick labels
-    plt.rc("ytick", labelsize=SMALL_SIZE)  # fontsize of the tick labels
-    plt.rc("legend", fontsize=SMALL_SIZE)  # legend fontsize
+    plt.rc("xtick", labelsize=MEDIUM_SIZE)  # fontsize of the tick labels
+    plt.rc("ytick", labelsize=MEDIUM_SIZE)  # fontsize of the tick labels
+    plt.rc("legend", fontsize=MEDIUM_SIZE)  # legend fontsize
     plt.rc("figure", titlesize=BIGGER_SIZE)  # fontsize of the figure title
 
-    fig = plt.figure()
+    fig = plt.figure(figsize=(8, 8))
     ax = fig.add_subplot(121)
     # colors_train = [left.index(c) if str(c) in left else len(left)-2 if str(int(float(str(c)))) in left_not_matching_str else len(left)-1 for c in train_labels]
     colors_train = []
@@ -2581,6 +2603,10 @@ def run(**kwargs):
                 match_result_file.write("no_match,no_match\n")
 
     match_result_file.close()
+    with open(_MATCH_RESULT_FILENAME, newline='\n') as f:
+        reader = csv.reader(f)
+        data = list(reader)
+
     print("colors test: ", set(colors_test))
     colors_test = np.array(colors_test)
     sc = ax.scatter(*test_data.T, s=0.3, c=colors_test, cmap="Spectral", alpha=1.0)
@@ -2594,5 +2620,15 @@ def run(**kwargs):
     # cbar.set_ticks(right)
     cbar.set_ticklabels(right_names)
 
-    plt.savefig(_PNG_FILENAME, dpi=320)
-    return {"png": plt}
+    # plt.savefig(_PNG_FILENAME, dpi=320)
+    buf = io.BytesIO()
+    plt.savefig(buf, format="png", dpi=80)
+    buf.seek(0)
+    resp_data = buf.read()
+    resp_data = base64.b64encode(resp_data)
+    resp_data = resp_data.decode("utf-8")
+
+    return {
+        "qfmatch": resp_data,
+        "qf_csv": data
+    }

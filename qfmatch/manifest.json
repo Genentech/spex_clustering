@@ -9,26 +9,14 @@
       "description": "Minimal bin size for binning the mix",
       "type": "int",
       "default": 60
-    },
-    "cluster_id_column": {
-      "name": "cluster_id_column",
-      "description": "_DATA_FILES_CLUSTER_ID_COLUMN",
-      "type": "int",
-      "default": 32
-    },
-    "x_columns": {
-      "name": "x_columns",
-      "description": "In which columns we have features' values in data files.",
-      "type": "array",
-      "default": [30, 31]
     }
   },
   "script_path": "qfmatch",
   "return": {
-    "png_data": {
-      "name": "png_data",
+    "qfmatch": {
+      "name": "qfmatch",
       "type": "array",
-      "description": "training transformed"
+      "description": "ready plt"
     }
   },
   "depends_and_script": ["dml"],
