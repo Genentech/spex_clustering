@@ -37,7 +37,7 @@ def run(**kwargs):
 
     test_data_orig = np.array(list(related_data.get('transformed', []))).astype(float)
     test_data_zscore = np.array(list(related_data.get('z_score', []))).astype(float)
-    if not test_data_zscore:
+    if len(test_data_zscore) == 0:
         test_data_zscore = test_data_orig
 
     # 5,7,8,9,11,12,15,16,17,18,19,21,22,24,26,27
@@ -49,6 +49,7 @@ def run(**kwargs):
 
     print(cluster)
     print(z_score)
+
     print(n_neighbors)
     print(min_dist)
     print(markers)
@@ -82,8 +83,8 @@ def run(**kwargs):
     # cbar = plt.colorbar(boundaries=list(set(train_labels)))
     # cbar.set_ticks(list(set(train_labels)))
     # plt.show()
-    # (H, W) = cluster.shape
 
+    (H, W) = cluster.shape
     res = {'dml': result1}
 
     print("training done")
