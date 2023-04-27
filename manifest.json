@@ -1,6 +1,7 @@
 {
   "name": "Clustering",
   "description": "",
+  "order": 2,
   "stages": [
     "Transformation",
     "Z score",
