@@ -17,7 +17,7 @@ def phenograph_cluster(adata,knn,markers,transformation='arcsin', scaling='z-sco
     if transformation=='log':
         data_for_calc= data_for_calc.apply(lambda x: np.log10(x) if np.issubdtype(x.dtype, np.number) else x)
 
-    # Dropdown selection for transformation. Options are 'z-score', 'winsorize', 'none'
+    # Dropdown selection for scaling. Options are 'z-score', 'winsorize', 'none'
     if scaling =='z-score':
         data_for_calc=data_for_calc.apply(zscore)
     if scaling =='winsorize':
