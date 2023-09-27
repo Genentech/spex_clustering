@@ -26,8 +26,6 @@
     }
   },
   "depends_and_script": [],
-  "depends_or_script": [
-  ],
   "libs": [
     "anndata==0.8.0"
   ]

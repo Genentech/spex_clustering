@@ -1,12 +1,8 @@
 {
   "name": "Clustering",
-  "description": "",
-  "order": 2,
+  "description": "Clustering",
+  "order": 1,
   "stages": [
-    "Transformation",
-    "Z score",
-    "Cluster",
-    "dml",
-    "qfmatch"
+    "Cluster"
   ]
 }

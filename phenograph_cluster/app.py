@@ -1,9 +1,11 @@
 import phenograph
 import anndata as ad
+import re
 from anndata import AnnData
 import scanpy as sc
 from scipy.stats import zscore
 from scipy.stats.mstats import winsorize
+import numpy as np
 
 def phenograph_cluster(adata,knn,markers,transformation='arcsin', scaling='z-score'):
     
@@ -35,3 +37,26 @@ def phenograph_cluster(adata,knn,markers,transformation='arcsin', scaling='z-sco
     adata.obs['cluster_phenograph'] = [str(i) for i in communities]
 
     return adata
+
+
+def run(**kwargs):
+
+    adata =  kwargs.get('adata')
+    knn =  kwargs.get('knn')
+    channel_list = kwargs.get("channel_list", [])
+    channel_list = [re.sub("[^0-9a-zA-Z]", "", item).lower().replace("target", "") for item in channel_list]
+    all_channels = kwargs.get("all_channels", [])
+
+    if len(channel_list) > 0:
+        channel_list: list[int] = [
+            all_channels.index(channel)
+            for channel in channel_list
+            if channel in all_channels
+        ]
+    else:
+        channel_list = list(range(len(all_channels)))
+
+
+    adata = phenograph_cluster(adata, knn, markers=channel_list)
+
+    return {'adata': adata}
