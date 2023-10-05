@@ -56,11 +56,12 @@ def run(**kwargs):
     scaling = kwargs.get('scaling')
     transformation = kwargs.get('transformation')
     knn = kwargs.get('knn')
-    channel_list = kwargs.get("channel_list", [])
     channel_list = [
-        re.sub("[^0-9a-zA-Z]", "", item).lower().replace("target", "") for item in channel_list
+        re.sub("[^0-9a-zA-Z]", "", item).lower().replace("target", "") for item in kwargs.get("channel_list", [])
     ]
-    all_channels = kwargs.get("all_channels", [])
+    all_channels = [
+        re.sub("[^0-9a-zA-Z]", "", item).lower().replace("target", "") for item in kwargs.get("all_channels", [])
+    ]
 
     if len(channel_list) > 0:
         channel_list: list[int] = [

@@ -38,7 +38,7 @@
       "description": "knn",
       "type": "int",
       "required": true,
-      "default": 1
+      "default": 10
     }
   },
   "script_path": "phenograph_cluster",
