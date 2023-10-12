@@ -18,7 +18,8 @@ def phenograph_cluster(
 
     expdf = adata.to_df()  # Get this anndata from feature extraction output or spex load file input
 
-    data_for_calc = expdf.iloc[:, markers]  # marker selection in spex UI
+    # data_for_calc = expdf.iloc[:, markers]  # marker selection in spex UI
+    data_for_calc = expdf.copy()
 
     # Dropdown selection for transformation. Options are 'arcsin', 'log', 'none'
     if transformation == 'arcsin':
