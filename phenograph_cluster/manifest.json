@@ -17,6 +17,12 @@
       "hidden": true,
       "required": true
     },
+    "channel_list": {
+      "name": "channel_list",
+      "description": "list of channels to use for nuclear segmentation",
+      "type": "channels",
+      "required": true
+    },
     "transformation": {
       "name": "transformation",
       "description": "transformation",

@@ -8,6 +8,30 @@ from scipy.stats.mstats import winsorize
 import numpy as np
 
 
+def parse_channel_list(channel_list, all_channels):
+
+    new_all_channels = []
+    for item in all_channels:
+        if isinstance(item, str):
+            item = re.sub("[^0-9a-zA-Z]", "", item).lower().replace("target", "")
+        new_all_channels.append(item)
+
+    new_channel_list = []
+    for item in channel_list:
+        if isinstance(item, str):
+            item = re.sub("[^0-9a-zA-Z]", "", item).lower().replace("target", "")
+        new_channel_list.append(item)
+
+    channel_list_int = [
+        new_all_channels.index(new_channel_list)
+        for channel in channel_list
+        if channel in all_channels
+    ]
+    if not channel_list_int:
+        channel_list_int = new_channel_list
+
+    return channel_list_int, all_channels
+
 def phenograph_cluster(
         adata,
         knn,
@@ -18,8 +42,7 @@ def phenograph_cluster(
 
     expdf = adata.to_df()  # Get this anndata from feature extraction output or spex load file input
 
-    # data_for_calc = expdf.iloc[:, markers]  # marker selection in spex UI
-    data_for_calc = expdf.copy()
+    data_for_calc = expdf.iloc[:, markers]  # marker selection in spex UI
 
     # Dropdown selection for transformation. Options are 'arcsin', 'log', 'none'
     if transformation == 'arcsin':
@@ -57,12 +80,9 @@ def run(**kwargs):
     scaling = kwargs.get('scaling')
     transformation = kwargs.get('transformation')
     knn = kwargs.get('knn')
-    channel_list = [
-        re.sub("[^0-9a-zA-Z]", "", item).lower().replace("target", "") for item in kwargs.get("channel_list", [])
-    ]
-    all_channels = [
-        re.sub("[^0-9a-zA-Z]", "", item).lower().replace("target", "") for item in kwargs.get("all_channels", [])
-    ]
+    channel_list, all_channels = parse_channel_list(kwargs.get("channel_list", []), kwargs.get("all_channels", []))
+    if not channel_list:
+        channel_list = list(range(len(all_channels)))
 
     if len(channel_list) > 0:
         channel_list: list[int] = [
