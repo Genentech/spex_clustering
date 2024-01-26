@@ -8,16 +8,16 @@
       "description": "path to file what we do",
       "type": "file",
       "hidden": false,
-      "required": true,
+      "required": false,
       "default": ""
     }
   },
   "script_path": "load_anndata",
   "return": {
-    "image": {
-      "type": "array",
-      "description": "Image opened by ASIImage",
-      "name": "image"
+    "adata": {
+      "type": "adata",
+      "description": "Anndata object",
+      "name": "adata"
     },
     "all_channels": {
       "type": "array",
@@ -29,6 +29,7 @@
   "depends_or_script": [
   ],
   "libs": [
-    "anndata==0.8.0"
+    "anndata==0.8.0",
+    "pandas==1.3.4"
   ]
 }
