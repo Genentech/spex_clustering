@@ -58,7 +58,7 @@
   "depends_and_script": [
     "feature_extraction"
   ],
-  "depends_or_script": ["load_anndata"],
+  "depends_or_script": [],
   "conda": ["python=3.9"],
   "conda_pip": [
     "phenograph==1.5.7",
