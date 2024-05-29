@@ -65,7 +65,8 @@
     "pandas==2.2.0",
     "scanpy==1.9.3",
     "scipy==1.9.1",
-    "anndata==0.8.0"
+    "anndata==0.8.0",
+    "matplotlib==3.7.2"
   ],
   "libs": [
     "numpy"
