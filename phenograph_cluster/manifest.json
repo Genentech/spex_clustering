@@ -66,7 +66,7 @@
     "feature_extraction"
   ],
   "depends_or_script": [],
-  "conda": ["python=3.11"],
+  "conda": ["python=3.9"],
   "conda_pip": [
     "pandas==2.2.0",
     "scanpy==1.9.4",
@@ -75,6 +75,7 @@
     "matplotlib==3.7.2"
   ],
   "libs": [
+    "numpy",
     "numpy==1.24.3",
     "scipy==1.9.3"
   ]
